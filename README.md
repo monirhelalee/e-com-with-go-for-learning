@@ -7,8 +7,9 @@ A simple e-commerce REST API built with Go's standard library.
 - RESTful API endpoints
 - Product listing and creation functionality
 - Simple HTTP server implementation
-- CORS support
+- CORS support with standardized headers
 - JSON request/response handling
+- Code reusability with helper functions
 
 ## API Endpoints
 
