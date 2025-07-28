@@ -36,11 +36,39 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(productList)
 }
 
+func createProduct(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		http.Error(w, "Please give me POST request", 400)
+		return
+	}
+	//r.Body => description, title, price, imageUrl => Product struct
+	var newProduct Product
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newProduct)
+	if err != nil {
+		http.Error(w, "Invalid request body", 400)
+		return
+	}
+
+	newProduct.ID = len(productList) + 1
+	productList = append(productList, newProduct)
+	w.WriteHeader(201)
+	encoder := json.NewEncoder(w)
+	encoder.Encode(newProduct)
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", helloHandler)
 	mux.HandleFunc("/about", aboutHandler)
 	mux.HandleFunc("/products", getProducts)
+	mux.HandleFunc("/create-product", createProduct)
+
 	fmt.Println("Server is running on port :8080")
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
